@@ -12,6 +12,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const { json } = require('body-parser');
 const { concat } = require('async');
+const { waitForDebugger } = require('inspector');
+const { response } = require('express');
 const request = require("request").defaults({ encoding: null });
 // App
 // const imagerouter= require('./routes/images')
@@ -111,37 +113,71 @@ app.post('/image/', (req, res) => {
 // }        
 
 let url= obj
-let result = [];
-for(i in url  ){
-  
-  // 200, {‘content-type’:‘application/json’, ‘content-length’:Buffer.byteLength(json)}
-  request.get(url[i], async function (err, re, body) {
-    const buffer = new Buffer.from(body);
-    console.log(buffer);
-    const parms = {
-      Image: {
-        Bytes: buffer,
-      },
-      MaxLabels: 10,
-    };
-    rekognition.detectLabels(parms, async function (err, data) {
-      //  req.setHeader(‘Content-Type’, ‘application/json’)
-      if (!err) {
-        
-       await  result.push(data.Labels);
-       
-      }
-      console.log(Object.values(result))
+
+let requests = []
+
+
+// Promise.all waits until all jobs are resolved
+Promise.all(url).then(resonses => resonses.forEach( resonse => {
+request.get(resonse,function(err, re, body){
+  const buffer = new Buffer.from(body);
+  const parms =     {
+    Image: {
+      Bytes: buffer,
+    },
+    MaxLabels: 10,
+  };rekognition.detectLabels(parms, async function (err, data) {
+    //  req.setHeader(‘Content-Type’, ‘application/json’)
+    if (!err) {
       
-    });
-
-  });
-
-}
+     await  requests.push((data.Labels));
+     
+    }
 
 
- return res.json(result)
+
+  }).promise()
+  .then(()=>{ return res.json (requests)})
+
+
+  
 })
+
+
+})).catch((err)=>{return res.json(err)})
+
+
+
+// for(i in url  ){
+
+  
+//   // 200, {‘content-type’:‘application/json’, ‘content-length’:Buffer.byteLength(json)}
+//   request.get(url[i],  function (err, re, body) {
+//     const buffer = new Buffer.from(body);
+//     // console.log(buffer);
+//     const parms = {
+//       Image: {
+//         Bytes: buffer,
+//       },
+//       MaxLabels: 10,
+//     };
+//     rekognition.detectLabels(parms, async function (err, data) {
+//       //  req.setHeader(‘Content-Type’, ‘application/json’)
+//       if (!err) {
+        
+//        await  result.push(data.Labels);
+       
+//       }
+//  console.log(result)
+      
+//     });
+
+//   });
+
+// }
+
+
+
 
 
 
@@ -181,6 +217,6 @@ for(i in url  ){
   // }
   
   
-
+})
 
 app.listen('3003')
