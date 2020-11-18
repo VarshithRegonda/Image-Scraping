@@ -1,7 +1,7 @@
  var AWS = require('aws-sdk');
 AWS.config.loadFromPath("./config.json");
 const express = require('express')
-const async = require('async')
+
 AWS.config.apiVersions = {
   rekognition: '2016-06-27',
   // other service API versions
@@ -9,11 +9,7 @@ AWS.config.apiVersions = {
 process.setMaxListeners(Infinity);
 const rekognition = new AWS.Rekognition()
 const bodyParser = require('body-parser');
-const fs = require('fs');
-const { json } = require('body-parser');
-const { concat } = require('async');
-const { waitForDebugger } = require('inspector');
-const { response } = require('express');
+
 const request = require("request").defaults({ encoding: null });
 // App
 // const imagerouter= require('./routes/images')
@@ -24,199 +20,114 @@ app.use(bodyParser.json());
 app.use(bodyParser.raw());
 app.use(bodyParser.text())
 
-// AWS.config.update({
-//     accessKeyId: "AKIA526JIYRBTHT6QBFS",
-//     secretAccessKey: "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",
-//     region: "us-east-1",
-//   });
 
-//   });
 
 app.get('/', (req, res) => {
     res.json({ message: 'Hello world' })
 })
-// app.use('/use', imagerouter)
+
 app.post('/image/', (req, res) => {
        
-    
-    // const url = "https://blkboxassets.s3.amazonaws.com/media/121871685_23845946091360553_5581094706740889931_n.jpg"
+  
+ 
+ var obj
+let url= req.body
 
   
-// let url = "https://www.whoi.edu/wp-content/uploads/2020/04/beach-stairs.jpg";
-// request.get(url, function (err, re, body) {
-//   const buffer = new Buffer.from(body);
-//   const parms={ Image:{
-//     Bytes:buffer,
-// },
-// MaxLabels:10
-// }
-// rekognition.detectLabels(parms,function(err,data){
-//   if(err){
-//       console.log(err)
-//   }
-//   else{
-      
-//       return  res.json(data)
-//   }
 
-// })
-// });
- 
- let obj= req.body
-//  console.log(obj)
-
- 
- 
-  
- let type = typeof obj;
- 
-
-   
-//   obj.map(function (ob) {
-     
-//      request.get(ob,(err,re,body)=>{
-//        console.log(ob)
-//       const buffer = new Buffer.from(ob,'base64');
-      
-    
-//       const parms={ Image:{
-//               Bytes:buffer,
-//           },
-//           MaxLabels:10
-//           }
-//           rekognition.detectLabels(parms,async (err,data)=>{
-//                 // if(!err){
-//                 //   //  console.log(data)
-//                 //     return await data
-//                 //     ;
-//                 //   }
-            
-                   
-                 
-            
-//                      return await res.json( data)
-                
-                
-//               })
-                
-              
-//      console.log()
-
-   
-    
- 
-              
-//    });
-  
-//   })
-
-// }        
-
-let url= obj
-
-let requests = []
-
-
-// Promise.all waits until all jobs are resolved
-Promise.all(url).then(resonses => resonses.forEach( resonse => {
-request.get(resonse,function(err, re, body){
-  const buffer = new Buffer.from(body);
-  const parms =     {
-    Image: {
-      Bytes: buffer,
-    },
-    MaxLabels: 10,
-  };rekognition.detectLabels(parms, async function (err, data) {
-    //  req.setHeader(‘Content-Type’, ‘application/json’)
-    if (!err) {
-      
-     await  requests.push((data.Labels));
-     
-    }
-
-
-
-  }).promise()
-  .then(()=>{ return res.json (requests)})
-
-
-  
-})
-
-
-})).catch((err)=>{return res.json(err)})
-
-
-
-// for(i in url  ){
-
-  
-//   // 200, {‘content-type’:‘application/json’, ‘content-length’:Buffer.byteLength(json)}
-//   request.get(url[i],  function (err, re, body) {
-//     const buffer = new Buffer.from(body);
-//     // console.log(buffer);
-//     const parms = {
-//       Image: {
-//         Bytes: buffer,
-//       },
-//       MaxLabels: 10,
-//     };
-//     rekognition.detectLabels(parms, async function (err, data) {
-//       //  req.setHeader(‘Content-Type’, ‘application/json’)
-//       if (!err) {
-        
-//        await  result.push(data.Labels);
-       
-//       }
-//  console.log(result)
-      
+// var requestAsync = function(url) {
+//     return new Promise((resolve, reject) => {
+//         var req = request(url, (err, response, body) => {
+//             if (err) return reject(err, response, body);
+//             resolve(Buffer.from(body));
+//         });
 //     });
-
-//   });
-
-// }
-
-
-
-
-
-
-
-
-
-  // for(i in url  ){
-  //   // 200, {'content-type':'application/json', 'content-length':Buffer.byteLength(json)}
-  //   request.get(url[i], function (err, re, body) {
-  //     console.log(typeof(body))
-  //     const buffer = new Buffer.from(body);
-  //     // console.log(buffer)
-  //     const parms={ Image:{
-  //       Bytes:buffer,
-  //   },
-  //   MaxLabels:10
-  //   }
+// };
+// var getParallel = async function() {
+//   //transform requests into Promises, await all
+//   try {
+//       var data = await Promise.all(urls.map(requestAsync));
       
-  //   rekognition.detectLabels(parms,function(err, response) {
-  //     if (err) {
-  //       console.log(err, err.stack); // an error occurred
-  //     } else {
-  //       // console.log(`Detected labels for: ${photo}`)
+//   } catch (err) {
+//       console.error(err);
+//   }
+//   console.log(data);
+// }
+// getParallel();
+Promise.all(url).then(resonses => resonses.forEach( resonse => {
+  request.get(resonse,function(err, re, body){
+    const buffer = new Buffer.from(body);
+    const parms =     {
+      Image: {
+        Bytes: buffer,
+      },
+      MaxLabels: 10,
+    };rekognition.detectLabels(parms, async function (err, data) {
+      //  req.setHeader(‘Content-Type’, ‘application/json’)
+      if (err) {
         
-  //        // for response.labels
-  //      let  t= response
-  //       console.log(t)
-  //     } // if
-  //   });
+     console.log(err,err.stack)
+      // await console.log(Object.values(data.Labels))
+     
+      }
+    
+      await console.log(data.Labels)
+  
+    })
+    // .promise()
+    //  .then(()=>{ console.log  (requests)})
+    //  .catch(()=>{console.log(err);})
+  
+ 
+    
+  })
+  
+   
+  })).then(()=>{return res.json({data:'tag'})})
+  .catch((err)=>{return res.json(err)})
+}
+
+)
 
 
-  //   })
-  
-  
+  // .then(() => console.log(obj))
+
   
 
+  
+  // console.log(t)
+  // const parms =     {
+  //   Image: {
+  //     Bytes: texts,
+  //   },
+  //   MaxLabels: 10,
   // }
+  // ;rekognition.detectLabels(parms, function (err, data) {
+  //   //  req.setHeader(‘Content-Type’, ‘application/json’)
+  //   if (!err) {
+    
+  //      requests.push((data.Labels));
+  //      console.log(requests)
+
+  //   }
   
   
-})
+// })
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.listen('3003')
