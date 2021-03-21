@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "scraps the mata data of image using aws",
   "main": "server.js",
+  "files": ["dist/**/*"],
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
