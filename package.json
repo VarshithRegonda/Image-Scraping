@@ -1,15 +1,15 @@
 {
-  "name": "test",
+  "name": "Image-Scraping",
   "version": "1.0.0",
-  "description": "",
+  "description": "scraps the mata data of image using aws",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "varshith",
+  "license": "Apache-2.0",
   "dependencies": {
     "async": "^3.2.0",
     "await": "^0.2.6",
